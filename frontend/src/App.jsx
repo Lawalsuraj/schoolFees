@@ -10,8 +10,10 @@ import AdminOverview from './pages/admin/AdminOverview.jsx';
 import AdminStudents from './pages/admin/AdminStudents.jsx';
 import AdminFeeStructures from './pages/admin/AdminFeeStructures.jsx';
 import AdminFeeRecords from './pages/admin/AdminFeeRecords.jsx';
+import Landing from './pages/Landing.jsx';
 
 function App() {
+
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const isLoading = useAuthStore((state) => state.isLoading);
 
@@ -28,38 +30,39 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-        <Route
-           path="/admin"
-           element={
-            <ProtectedRoute allowedRoles={['admin']}>
-             <AdminLayout />
-            </ProtectedRoute>
-         }
-        >
-  <Route index element={<AdminOverview />} />
-  <Route path="students" element={<AdminStudents />} />
-  <Route path="fee-structures" element={<AdminFeeStructures />} />
-  <Route path="fee-records" element={<AdminFeeRecords />} />
-</Route>
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<AdminOverview />} />
+        <Route path="students" element={<AdminStudents />} />
+        <Route path="fee-structures" element={<AdminFeeStructures />} />
+        <Route path="fee-records" element={<AdminFeeRecords />} />
+      </Route>
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <StudentDashboard />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route path="*" element={<Navigate to="/login" />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
+  </BrowserRouter>
+
+  )}
 
 export default App;
