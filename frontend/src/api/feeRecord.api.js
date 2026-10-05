@@ -7,3 +7,5 @@ export const generateFeeRecords = (feeStructureId) =>
 export const getMyFeeRecords = () => api.get('/fee-records/my-records');
 
 export const deleteFeeRecord = (id) => api.delete(`/fee-records/${id}`);
+
+export const getStats = () => api.get('/fee-records/stats');

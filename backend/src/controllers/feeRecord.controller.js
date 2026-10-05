@@ -66,6 +66,51 @@ export const getFeeRecord = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', data: { feeRecord } });
 });
 
+
+export const getStats = catchAsync(async (req, res, next) => {
+  const totalStudents = await User.countDocuments({ role: 'student' });
+
+  const overallResult = await FeeRecord.aggregate([
+    { $group: { _id: null, totalDue: { $sum: '$amountDue' }, totalPaid: { $sum: '$amountPaid' } } },
+  ]);
+  const totalCollected = overallResult[0]?.totalPaid || 0;
+  const totalOutstanding = overallResult[0] ? overallResult[0].totalDue - overallResult[0].totalPaid : 0;
+
+  // Breakdown per class
+  const classBreakdown = await FeeRecord.aggregate([
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'student',
+        foreignField: '_id',
+        as: 'studentInfo',
+      },
+    },
+    { $unwind: '$studentInfo' },
+    {
+      $group: {
+        _id: '$studentInfo.className',
+        collected: { $sum: '$amountPaid' },
+        due: { $sum: '$amountDue' },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        className: '$_id',
+        collected: 1,
+        outstanding: { $subtract: ['$due', '$collected'] },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: { totalStudents, totalCollected, totalOutstanding, classBreakdown },
+  });
+});
+
+
 export const deleteFeeRecord = catchAsync(async (req, res, next) => {
   const feeRecord = await FeeRecord.findByIdAndDelete(req.params.id);
   if (!feeRecord) return next(new AppError('Fee record not found', 404));

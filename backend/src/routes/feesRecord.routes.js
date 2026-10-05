@@ -5,6 +5,7 @@ import {
   getMyFeeRecords,
   getFeeRecord,
   deleteFeeRecord,
+  getStats,
 } from '../controllers/feeRecord.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { restrictTo } from '../middleware/restrictTo.middleware.js';
@@ -17,6 +18,7 @@ router.use(protect, restrictTo('admin'));
 
 router.post('/generate', generateFeeRecords);
 router.get('/', getAllFeeRecords);
+router.get('/stats', getStats);
 router.get('/:id', getFeeRecord);
 router.delete('/:id', deleteFeeRecord);
 
