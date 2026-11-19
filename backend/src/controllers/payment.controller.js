@@ -28,6 +28,7 @@ export const initiatePayment = catchAsync(async (req, res, next) => {
     {
       email: req.user.email,
       amount: amountOwed * 100,
+      callback_url: `${process.env.CLIENT_URL}/payment/success`,
     },
     {
       headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
@@ -85,8 +86,26 @@ export const handleWebhook = catchAsync(async (req, res, next) => {
 });
 
 
+export const getPaymentStatus = catchAsync(async (req, res, next) => {
+  const payment = await Payment.findOne({ reference: req.params.reference }).populate(
+    'feeRecord',
+    'session term'
+  );
+
+  if (!payment) return next(new AppError('Payment not found', 404));
+
+  if (payment.student.toString() !== req.user._id.toString()) {
+    return next(new AppError('You are not authorized to view this payment', 403));
+  }
+
+  res.status(200).json({ status: 'success', data: { payment } });
+});
+
+
 export const getMyPayments = catchAsync(async (req, res, next) => {
-  const payments = await Payment.find({ student: req.user._id }).sort({ createdAt: -1 });
+  const payments = await Payment.find({ student: req.user._id })
+    .populate('feeRecord', 'session term')
+    .sort({ createdAt: -1 });
 
   res.status(200).json({
     status: 'success',

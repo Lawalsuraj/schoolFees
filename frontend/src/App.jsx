@@ -11,6 +11,8 @@ import AdminStudents from './pages/admin/AdminStudents.jsx';
 import AdminFeeStructures from './pages/admin/AdminFeeStructures.jsx';
 import AdminFeeRecords from './pages/admin/AdminFeeRecords.jsx';
 import Landing from './pages/Landing.jsx';
+import PaymentSuccess from './pages/PaymentSuccess.jsx';
+import Receipt from './pages/Receipt.jsx';
 
 function App() {
 
@@ -55,6 +57,24 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['student']}>
             <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/payment/success"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <PaymentSuccess />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/receipt/:paymentId"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <Receipt />
           </ProtectedRoute>
         }
       />
