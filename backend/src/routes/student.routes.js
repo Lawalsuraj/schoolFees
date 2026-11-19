@@ -9,12 +9,17 @@ import {
 } from '../controllers/student.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { restrictTo } from '../middleware/restrictTo.middleware.js';
+import validate from '../middleware/validate.middleware.js';
+import { createStudentSchema } from '../validators/student.validator.js';
 
 const router = express.Router();
 
-router.use(protect, restrictTo('admin')); // applies to every route below
+// Checkpoints 1 and 2: run before EVERY route below this line
+router.use(protect, restrictTo('admin'));
 
-router.post('/', createStudent);
+// Checkpoint 3 (validate) is added only where the request has a body to check
+router.post('/', validate(createStudentSchema), createStudent);
+
 router.get('/', getAllStudents);
 router.get('/:id', getStudent);
 router.patch('/:id', updateStudent);
