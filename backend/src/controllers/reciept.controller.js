@@ -19,6 +19,7 @@ export const getReceipt = catchAsync(async (req, res, next) => {
     return next(new AppError('Receipt not available — payment not yet confirmed', 400));
   }
 
+  //find fee record by id
   const feeRecord = await FeeRecord.findById(payment.feeRecord);
 
   res.status(200).json({

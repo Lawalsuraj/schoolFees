@@ -1,4 +1,3 @@
-
 import crypto from 'crypto';
 import axios from 'axios';
 import Payment from '../models/payment.model.js';
